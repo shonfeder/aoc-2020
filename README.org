@@ -1,0 +1,8 @@
+#+TITLE: Advent of Code 2020
+
+My Code for the Advent of Code 2020.
+
+* The Plan
+
+See how far I can get using (the [[https://github.com/LPCIC/elpi#elpi---embeddable-%CE%BBprolog-interpreter][elpi]] implementation of) [[http://www.lix.polytechnique.fr/~dale/lProlog/][λProlog]]. Then
+default to OCaml when I'm at my wit's end.
