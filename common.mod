@@ -29,12 +29,21 @@ pred read_input_to i:string, i:(string -> A -> o), o:list A.
 read_input_to FileName Parse Terms :-
               read_input_to_i FileName (_Int \ Parse) Terms.
 
+% TODO Fix implementation
+% We shouldn't read a whole list to memory then reinsert line endeings.
+pred read_all i:string, o:string.
+read_all FileName Content :-
+         read_input_to FileName (X\Y\ X = Y) Lines,
+         std.fold Lines "" (A\B\C\ C is A ^ "\n" ^ B) Content.
+
+
 pred read_from_file i:string, i:(in_stream -> prop).
 read_from_file FileName Reader :-
                open_in FileName Strm,
                Reader Strm,
                close_in Strm,
                !.
+
 }
 
 namespace str {
