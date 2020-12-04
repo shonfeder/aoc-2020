@@ -2,19 +2,39 @@
 
 namespace io {
 
+%% [read_lines_to_i Strm Parse List] is the list of terms produced by applying
+%% parsing each line with [Parse], which takes the current index of the line as
+%% its first argument.
+pred read_lines_to_i i:in_stream, i:(int -> string -> A -> o), o:list A.
+read_lines_to_i Strm Parse Terms :- read_lines_to_i.aux Strm 0 Parse Terms.
+
+pred read_lines_to_i.aux i:in_stream, i:int, i:(int -> string -> A -> o), o:list A.
+read_lines_to_i.aux Strm _ _ [] :- eof Strm, !.
+read_lines_to_i.aux Strm N Parse (Term :: Terms) :-
+                    input_line Strm L,
+                    Parse N L Term,
+                    N' is N + 1,
+                    read_lines_to_i.aux Strm N' Parse Terms.
+
 pred read_lines_to i:in_stream, i:(string -> A -> o), o:list A.
-read_lines_to Strm _ [] :- eof Strm, !.
-read_lines_to Strm Parse (Term :: Terms) :-
-              input_line Strm L,
-              Parse L Term,
-              read_lines_to Strm Parse Terms.
+read_lines_to Strm Parse Terms :-
+              read_lines_to_i Strm (_Int \ Parse) Terms.
+
+pred read_input_to_i i:string, i:(int -> string -> A -> o), o:list A.
+read_input_to_i FileName Parse Terms :-
+                Reader = (Strm \ read_lines_to_i Strm Parse Terms),
+                read_from_file FileName Reader.
 
 pred read_input_to i:string, i:(string -> A -> o), o:list A.
 read_input_to FileName Parse Terms :-
-           open_in FileName Strm,
-           read_lines_to Strm Parse Terms,
-           close_in Strm.
+              read_input_to_i FileName (_Int \ Parse) Terms.
 
+pred read_from_file i:string, i:(in_stream -> prop).
+read_from_file FileName Reader :-
+               open_in FileName Strm,
+               Reader Strm,
+               close_in Strm,
+               !.
 }
 
 namespace str {
