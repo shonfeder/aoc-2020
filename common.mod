@@ -80,3 +80,13 @@ split_on.aux Len SubLen Idx Str SubStr Split :-
     Idx' is Idx + 1,
     split_on.aux Len SubLen Idx' Str SubStr Split.
 }
+
+namespace int {
+
+% See https://stackoverflow.com/a/18338089/1187277
+pred between i:int, i:int, o:int.
+between N M K :- N =< M, K = N.
+between N M K :- N == M, !, K = N.
+between N M K :- N <  M, N1 is N + 1, between N1 M K.
+
+}
