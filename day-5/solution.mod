@@ -81,10 +81,8 @@ solve-2 Answer :-
        % Find a seat ID with neighboring IDs but missing a
        % boarding pass in the database.
        ( seat _ _ _ N
-       & Answer is N + 1
-       & not (seat _ _ _ Answer)
-       & M is Answer + 1
-       & seat _ _ _ M ).
+       & Answer is N + 1 & not (seat _ _ _ Answer)
+       & M is Answer + 1 & seat _ _ _ M ).
 
 main :-
      solve-1 Answer,
