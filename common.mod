@@ -90,3 +90,115 @@ between N M K :- N == M, !, K = N.
 between N M K :- N <  M, N1 is N + 1, between N1 M K.
 
 }
+
+namespace set {
+
+% Only works for ground terms
+pred of-list i:list A, o:std.set A.
+of-list List Set :-
+        std.set.make cmp_term Empty,
+        std.fold List Empty std.set.add Set.
+}
+
+% Differene lists
+namespace dl {
+
+kind t type -> type.
+type v list A -> list A -> t A.
+
+% Where
+%   - PL is a partial list like [1,2,3|FV]
+%   - FV is an unbound variable
+pred of-list i:list A, o:t A.
+of-list L (v PL FV) :- std.append L FV PL.
+
+pred to-list i:t A, o:list A.
+to-list (v PL FV) PL :- FV = [].
+
+}
+
+namespace list {
+% Convert a list of prpos into a conjuction of the same props.
+pred to-conj i:list prop, o:prop.
+to-conj [] true.
+to-conj (P::Ps) (P & Conj) :- list.to-conj Ps Conj.
+
+% [of-length N L] [L] is a list of length [N].
+pred of-length i:int, o:list A.
+of-length 0 [].
+of-length N (X_::Xs) :- of-length {calc (N - 1)} Xs.
+
+pred replace-nth o:int, i:(A -> B -> prop), i:list A, o:list A.
+replace-nth N P As Bs :- var N,
+            Max is {std.length As} - 1,
+            int.between 0 Max N,
+            replace-nth N P As Bs.
+replace-nth N P [A|Xs] [B|Xs] :- not (var N), N = 0, P A B, !.
+replace-nth N P [X|Xs] [X|Bs] :-
+            not (var N),
+            N' is N - 1,
+            replace-nth N' P Xs Bs.
+replace-nth _ _ [] _ :- std.fatal-error "replace-nth out of elements".
+}
+
+% A partial and broken implementation of DCGs
+namespace dcg {
+
+pred appl-ios i:list (A -> B -> prop), i:A, o:B, o:list prop.
+appl-ios [] _ _ [] :- !.
+appl-ios [P] I O [PIO] :- PIO = P I O, !.
+appl-ios (P::Ps) I O (P I O'::IOPs) :- appl-ios Ps O' O IOPs.
+
+pred foo i:A, o:O.
+foo A B :- B is A + 1.
+
+pred phrase o:(list A -> list A -> prop), o:list A.
+phrase P Ls :- P Ls [].
+
+pred parse i:list A, i:(list B -> dcg A), o:list B.
+parse In Parser Out :-
+      std.length In Len,
+      list.of-length Len Out,
+      phrase (Parser Out) In,
+      !.
+}
+
+pred seq o:list A, o:list A, o:list A.
+macro @seq Ls I O :- std.appendR Ls O I.
+
+% type rl (t A -> prop) -> list (t A -> prop) -> prop.
+macro @rl Head Body :-
+      (Head I O :-
+            dcg.appl-ios Body I O Props,
+            list.to-conj Props Conj,
+            Conj).
+
+typeabbrev (dcg A) (list A -> list A -> prop).
+
+% Example
+%
+type sentence, noun_phrase, verb_phrase, det, noun, verb dcg string.
+@rl sentence    [noun_phrase, verb_phrase].
+
+@rl noun_phrase [det, noun].
+@rl verb_phrase [verb, noun_phrase].
+
+@rl det  [@seq ["the"]].
+@rl det  [@seq ["a"]].
+
+@rl noun  [@seq ["cat"]].
+@rl noun  [@seq ["bat"]].
+
+@rl verb  [@seq ["eats"]].
+
+% Example of translating
+type num int -> dcg string.
+@rl (num 1) [@seq ["one"]].
+@rl (num 2) [@seq ["two"]].
+
+type nums list int -> dcg string.
+@rl (nums []) [].
+@rl (nums (N::Ns))
+    [ num N
+    , nums Ns
+    ].
