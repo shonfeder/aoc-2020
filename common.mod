@@ -125,8 +125,8 @@ to-conj (P::Ps) (P & Conj) :- list.to-conj Ps Conj.
 
 % [of-length N L] [L] is a list of length [N].
 pred of-length i:int, o:list A.
-of-length 0 [].
-of-length N (X_::Xs) :- of-length {calc (N - 1)} Xs.
+of-length 0 [] :- !.
+of-length N (X_::Xs) :- N > 0, of-length {calc (N - 1)} Xs.
 
 pred replace-nth o:int, i:(A -> B -> prop), i:list A, o:list A.
 replace-nth N P As Bs :- var N,
