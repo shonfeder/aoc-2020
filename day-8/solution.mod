@@ -67,6 +67,11 @@ solve-2 [FileName] :-
         run Program' (finished Answer),
         print ">>>" Answer.
 
+pred fix-instr i:prop, o:prop.
+fix-instr (instr Ln (jmp N)) (instr Ln (nop N)).
+fix-instr (instr Ln (nop N)) (instr Ln (jmp N)).
+fix-instr (instr Ln (acc N)) (instr Ln (acc N)).
+
 kind result type.
 type finished int -> result.
 type loop     result.
@@ -75,11 +80,6 @@ pred run i:list prop, o:result.
 run Program Result :-
     std.length Program Final,
     Program => run.aux Final 0 0 Result.
-
-pred fix-instr i:prop, o:prop.
-fix-instr (instr Ln (jmp N)) (instr Ln (nop N)).
-fix-instr (instr Ln (nop N)) (instr Ln (jmp N)).
-fix-instr (instr Ln (acc N)) (instr Ln (acc N)).
 
 pred run.aux i:int, i:int, i:int, o: result.
 run.aux Final Final Acc Result :- Result = finished Acc.
