@@ -1,5 +1,13 @@
 % Code shared between solutions
 
+namespace std {
+
+pred min i:A, i:A, o:A.
+min N M N :- N =< M, !.
+min _ M M.
+
+}
+
 namespace io {
 
 %% [read_lines_to_i Strm Parse List] is the list of terms produced by applying
