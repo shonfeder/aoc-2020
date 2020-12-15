@@ -156,6 +156,18 @@ sublist List Sublist :-
         list.of-length Len Sublist,
         std.appendR _Pre Suffix List,
         std.appendR Sublist _Post Suffix.
+
+pred sum i:list int, o:int.
+pred sum i:list float, o:float.
+sum Ls I :- std.fold Ls 0 (A\B\C\ C is A + B) I.
+
+pred max i:list A, o:A.
+max [X|Xs] M :- std.fold Xs X std.max M, !.
+max _ _ :- std.fatal-error "invalid arguments to list.max".
+
+pred min i:list A, o:A.
+min [X|Xs] M :- std.fold Xs X std.min M.
+min _ _ :- std.fatal-error "invalid arguments to list.min".
 }
 
 % A partial and broken implementation of DCGs
