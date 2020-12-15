@@ -139,6 +139,15 @@ replace-nth N P [X|Xs] [X|Bs] :-
             N' is N - 1,
             replace-nth N' P Xs Bs.
 replace-nth _ _ [] _ :- std.fatal-error "replace-nth out of elements".
+
+% Enumerates all sublists on backtracking
+pred sublist o:list A, o:list A.
+sublist _List [].
+sublist List Sublist :-
+        int.between 1 {std.length List} Len,
+        list.of-length Len Sublist,
+        std.appendR _Pre Suffix List,
+        std.appendR Sublist _Post Suffix.
 }
 
 % A partial and broken implementation of DCGs
