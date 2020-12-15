@@ -148,6 +148,15 @@ replace-nth N P [X|Xs] [X|Bs] :-
             replace-nth N' P Xs Bs.
 replace-nth _ _ [] _ :- std.fatal-error "replace-nth out of elements".
 
+% [select List X Rest] succeeds when [X] is an element selectef rom [List]
+% and [Rest] is the list of reminaing elements.
+pred select i:list A, o:A, o:list A.
+select List X Rest :-
+       std.appendR Pre Suffix List,
+       std.appendR [X] Post Suffix,
+       std.append Pre Post Rest.
+select [] _ _ :- std.fatal-error "list.select called on empty list".
+
 % Enumerates all sublists on backtracking
 pred sublist o:list A, o:list A.
 sublist _List [].
