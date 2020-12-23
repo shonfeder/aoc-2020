@@ -120,6 +120,14 @@ pred of-list i:list A, o:std.set A.
 of-list List Set :-
         std.set.make cmp_term Empty,
         std.fold List Empty std.set.add Set.
+
+pred max i:std.set A, o:A.
+max Set Max :-
+    list.max {std.set.elements Set} Max.
+
+pred min i:std.set A, o:A.
+min Set Min :-
+    list.min {std.set.elements Set} Min.
 }
 
 % Differene lists
