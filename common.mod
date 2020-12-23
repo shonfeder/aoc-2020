@@ -109,6 +109,8 @@ between N M K :- N < M, K = N.
 between N M K :- N == M, !, K = N.
 between N M K :- N <  M, N1 is N + 1, between N1 M K.
 
+pred of-string i:string, o:int.
+of-string Str I :- I is string_to_int Str.
 }
 
 namespace set {
