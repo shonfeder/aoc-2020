@@ -6,6 +6,9 @@ pred min i:A, i:A, o:A.
 min N M N :- N =< M, !.
 min _ M M.
 
+pred add i:A, i:A, o:A.
+add A B C :- C is A + B.
+}
 }
 
 namespace io {
