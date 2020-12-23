@@ -199,6 +199,29 @@ max _ _ :- std.fatal-error "invalid arguments to list.max".
 pred min i:list A, o:A.
 min [X|Xs] M :- std.fold Xs X std.min M.
 min _ _ :- std.fatal-error "invalid arguments to list.min".
+
+%% [sort List Sorted] uses merege sort
+pred sort i:list A, o:list A.
+sort []   [].
+sort [X]  [X].
+sort List Sorted:-
+    List = [_, _ |_],
+    sort.divide List L1 L2,
+    sort L1 Sorted1,
+    sort L2 Sorted2,
+    sort.merge Sorted1 Sorted2 Sorted.                  % and sorted parts are merged
+
+pred sort.divide i:list A, o:list A, o:list A.
+sort.divide [] [] [].
+sort.divide [X] [X] [].
+sort.divide [X,Y|Rest] [X|Xs] [Y|Ys] :- sort.divide Rest Xs Ys.
+
+pred sort.merge i:list A, i:list A, o:list A.
+sort.merge [] L L.
+sort.merge L [] L :- not (L = []).
+sort.merge [X|T1] [Y|T2] [X|T] :- X =< Y, sort.merge T1 [Y|T2] T .
+sort.merge [X|T1] [Y|T2] [Y|T] :- X >  Y, sort.merge [X|T1] T2 T .
+
 }
 
 % A partial and broken implementation of DCGs
