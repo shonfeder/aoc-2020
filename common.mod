@@ -9,6 +9,15 @@ min _ M M.
 pred add i:A, i:A, o:A.
 add A B C :- C is A + B.
 }
+
+namespace rel {
+
+pred sym i:(A -> B -> prop), o:A, o:B.
+sym P A B :- P A B ; P B A.
+
+pred compose i:(A -> B -> prop), i:(B -> C -> prop), o:A, o:C.
+compose R A R' C :- R A B, R' B C.
+
 }
 
 namespace io {
